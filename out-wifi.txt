@@ -1,0 +1,35 @@
+Waf: Entering directory `/home/zarif98sjs/ns-3-dev/build'
+[1951/2007] Compiling scratch/my-red-vs-ared-wifi.cc
+[1968/2007] Linking build/scratch/my-red-vs-ared-wifi
+Waf: Leaving directory `/home/zarif98sjs/ns-3-dev/build'
+Build commands will be stored in build/compile_commands.json
+'build' finished successfully (6.673s)
+Running the simulation
+There should be some unforced drops (LEFT)
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 766 / 446460
+Packets/Bytes enqueued: 648 / 377100
+Packets/Bytes dequeued: 648 / 377100
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 118 / 69360
+Packets/Bytes dropped before enqueue: 118 / 69360
+  Forced drop: 70 / 41136
+  Unforced drop: 48 / 28224
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 648 / 377100
+Packets/Bytes marked: 0 / 0
+
+*** Stats from the bottleneck queue disc (LEFT) ***
+
+Packets/Bytes received: 442 / 25104
+Packets/Bytes enqueued: 442 / 25104
+Packets/Bytes dequeued: 442 / 25104
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 0 / 0
+Packets/Bytes dropped before enqueue: 0 / 0
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 442 / 25104
+Packets/Bytes marked: 0 / 0
+
+Destroying the simulation
