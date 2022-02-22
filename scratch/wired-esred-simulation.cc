@@ -34,7 +34,7 @@
 
 using namespace ns3;
 
-std::string exp_name = "wired-ESred";
+std::string exp_name = "wired-ES-red";
 
 uint32_t prev_b = 0;
 Time prevTime = Seconds (0);
@@ -121,7 +121,7 @@ TraceQueueDrop (Ptr<QueueDisc> queue)
 
 int main (int argc, char *argv[])
 {
-  uint32_t    nLeaf = 30;
+  uint32_t    nLeaf = 10;
   uint32_t    maxPackets = 100;
   bool        modeBytes  = true; // byte mode
 
@@ -157,12 +157,12 @@ int main (int argc, char *argv[])
 
   if (!modeBytes)
     {
-      Config::SetDefault ("ns3::StabilizedRedQueueDisc::MaxSize",
+      Config::SetDefault ("ns3::ESRedQueueDisc::MaxSize",
                           QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, queueDiscLimitPackets)));
     }
   else
     {
-      Config::SetDefault ("ns3::StabilizedRedQueueDisc::MaxSize",
+      Config::SetDefault ("ns3::ESRedQueueDisc::MaxSize",
                           QueueSizeValue (QueueSize (QueueSizeUnit::BYTES, queueDiscLimitPackets * pktSize)));
     }
 
@@ -199,7 +199,7 @@ int main (int argc, char *argv[])
   stack.Install (d.GetRight ());
   TrafficControlHelper tchBottleneck;
   QueueDiscContainer queueDiscs;
-  tchBottleneck.SetRootQueueDisc ("ns3::StabilizedRedQueueDisc");
+  tchBottleneck.SetRootQueueDisc ("ns3::ESRedQueueDisc");
   tchBottleneck.Install (d.GetLeft ()->GetDevice (0));
   queueDiscs = tchBottleneck.Install (d.GetRight ()->GetDevice (0));
 
