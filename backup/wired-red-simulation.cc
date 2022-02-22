@@ -26,8 +26,6 @@
 #include "ns3/applications-module.h"
 #include "ns3/point-to-point-layout-module.h"
 #include "ns3/traffic-control-module.h"
-#include "ns3/mobility-module.h"
-#include "ns3/flow-monitor-module.h"
 
 #include <iostream>
 #include <iomanip>
@@ -35,57 +33,44 @@
 
 using namespace ns3;
 
-std::string dir;
-uint32_t prev = 0;
-Time prevTime = Seconds (0);
-
-// Calculate throughput
 static void
-TraceThroughput (Ptr<FlowMonitor> monitor)
+TraceQueue (Ptr<QueueDisc> queue)
 {
-  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
-  auto itr = stats.begin ();
-  Time curTime = Now ();
-  std::ofstream thr ("demo-throughput.dat", std::ios::out | std::ios::app);
-  thr <<  curTime << " " << (8 * (itr->second.txBytes - prev)) / (1e6 * (curTime.GetSeconds () - prevTime.GetSeconds ())) << std::endl;
-  prevTime = curTime;
-  prev = itr->second.txBytes;
-  Simulator::Schedule (Seconds (0.4), &TraceThroughput, monitor);
+  uint32_t qSize = queue->GetCurrentSize ().GetValue ();
+  uint32_t qMaxSize = queue->GetMaxSize ().GetValue (); 
+  double bufferOccupancy = qSize * 100.0 / (double) qMaxSize; 
+  std::ofstream q ("wired-red-queue-100Leaf.dat", std::ios::out | std::ios::app);
+  q << Simulator::Now ().GetSeconds () << " " << qSize << " " << bufferOccupancy << " "<<qMaxSize<<std::endl;
+  Simulator::Schedule (Seconds (0.01), &TraceQueue, queue);
 }
 
 int main (int argc, char *argv[])
 {
-  uint32_t    nLeaf = 10;
+  uint32_t    nLeaf = 100;
   uint32_t    maxPackets = 100;
-  bool        modeBytes  = false;
-  uint32_t    queueDiscLimitPackets = 1000;
+  bool        modeBytes  = true; // byte mode
+
+  // queue disc limit * pktSize ~ 0.5 Mytes
+  uint32_t    queueDiscLimitPackets = 977;
+  uint32_t    pktSize = 512;
+
+  std::string appDataRate = "650Mbps";
+  uint16_t port = 5001;
+  std::string bottleNeckLinkBw = "45Mbps";
+  std::string bottleNeckLinkDelay = "1ms";
+
   double      minTh = 5;
   double      maxTh = 15;
-  uint32_t    pktSize = 512;
-  std::string appDataRate = "10Mbps";
-  std::string queueDiscType = "RED";
-  uint16_t port = 5001;
-  std::string bottleNeckLinkBw = "1Mbps";
-  std::string bottleNeckLinkDelay = "50ms";
 
   CommandLine cmd (__FILE__);
   cmd.AddValue ("nLeaf",     "Number of left and right side leaf nodes", nLeaf);
   cmd.AddValue ("maxPackets","Max Packets allowed in the device queue", maxPackets);
   cmd.AddValue ("queueDiscLimitPackets","Max Packets allowed in the queue disc", queueDiscLimitPackets);
-  cmd.AddValue ("queueDiscType", "Set Queue disc type to RED or ARED", queueDiscType);
   cmd.AddValue ("appPktSize", "Set OnOff App Packet Size", pktSize);
   cmd.AddValue ("appDataRate", "Set OnOff App DataRate", appDataRate);
   cmd.AddValue ("modeBytes", "Set Queue disc mode to Packets (false) or bytes (true)", modeBytes);
 
-  cmd.AddValue ("redMinTh", "RED queue minimum threshold", minTh);
-  cmd.AddValue ("redMaxTh", "RED queue maximum threshold", maxTh);
   cmd.Parse (argc,argv);
-
-  if ((queueDiscType != "RED") && (queueDiscType != "ARED"))
-    {
-      std::cout << "Invalid queue disc type: Use --queueDiscType=RED or --queueDiscType=ARED" << std::endl;
-      exit (1);
-    }
 
   Config::SetDefault ("ns3::OnOffApplication::PacketSize", UintegerValue (pktSize));
   Config::SetDefault ("ns3::OnOffApplication::DataRate", StringValue (appDataRate));
@@ -112,12 +97,7 @@ int main (int argc, char *argv[])
   Config::SetDefault ("ns3::RedQueueDisc::LinkDelay", StringValue (bottleNeckLinkDelay));
   Config::SetDefault ("ns3::RedQueueDisc::MeanPktSize", UintegerValue (pktSize));
 
-  if (queueDiscType == "ARED")
-    {
-      // Turn on ARED
-      Config::SetDefault ("ns3::RedQueueDisc::ARED", BooleanValue (true));
-      Config::SetDefault ("ns3::RedQueueDisc::LInterm", DoubleValue (10.0));
-    }
+  ////////////////////////////////////////////////////////////////////////////////////
 
   // Create the point-to-point link helpers
   PointToPointHelper bottleNeckLink;
@@ -128,9 +108,12 @@ int main (int argc, char *argv[])
   pointToPointLeaf.SetDeviceAttribute    ("DataRate", StringValue ("10Mbps"));
   pointToPointLeaf.SetChannelAttribute   ("Delay", StringValue ("1ms"));
 
+
   PointToPointDumbbellHelper d (nLeaf, pointToPointLeaf,
                                 nLeaf, pointToPointLeaf,
                                 bottleNeckLink);
+
+  ////////////////////////////////////////////////////////////////////////////////////
 
   // Install Stack
   InternetStackHelper stack;
@@ -158,8 +141,10 @@ int main (int argc, char *argv[])
 
   // Install on/off app on all right side nodes
   OnOffHelper clientHelper ("ns3::TcpSocketFactory", Address ());
-  clientHelper.SetAttribute ("OnTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
-  clientHelper.SetAttribute ("OffTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
+  // clientHelper.SetAttribute ("OnTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
+  // clientHelper.SetAttribute ("OffTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
+  clientHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+  clientHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   Address sinkLocalAddress (InetSocketAddress (Ipv4Address::GetAny (), port));
   PacketSinkHelper packetSinkHelper ("ns3::TcpSocketFactory", sinkLocalAddress);
   ApplicationContainer sinkApps;
@@ -168,7 +153,7 @@ int main (int argc, char *argv[])
       sinkApps.Add (packetSinkHelper.Install (d.GetLeft (i)));
     }
   sinkApps.Start (Seconds (0.0));
-  sinkApps.Stop (Seconds (30.0));
+  sinkApps.Stop (Seconds (6.0));
 
   ApplicationContainer clientApps;
   for (uint32_t i = 0; i < d.RightCount (); ++i)
@@ -179,35 +164,38 @@ int main (int argc, char *argv[])
       clientApps.Add (clientHelper.Install (d.GetRight (i)));
     }
   clientApps.Start (Seconds (1.0)); // Start 1 second after sink
-  clientApps.Stop (Seconds (15.0)); // Stop before the sink
+  clientApps.Stop (Seconds (5.0)); // Stop before the sink
 
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
-  AsciiTraceHelper ascii;
-  bottleNeckLink.EnableAsciiAll (ascii.CreateFileStream ("red-vs-ared.tr"));
+  // AsciiTraceHelper ascii;
+  // bottleNeckLink.EnableAsciiAll (ascii.CreateFileStream ("wireless-sred.tr"));
+  // bottleNeckLink.EnablePcapAll ("wireless-sred");
 
-    // Flow monitor
-  Ptr<FlowMonitor> flowMonitor;
-  FlowMonitorHelper flowHelper;
-  flowMonitor = flowHelper.InstallAll();
-  Simulator::Schedule (Seconds (0 + 0.000001), &TraceThroughput, flowMonitor);
+  // // Flow monitor
+  // Ptr<FlowMonitor> flowMonitor;
+  // FlowMonitorHelper flowHelper;
+  // flowMonitor = flowHelper.InstallAll();
+  // Simulator::Schedule (Seconds (0 + 0.000001), &TraceThroughput, flowMonitor);
+  Simulator::Schedule (Seconds (1), &TraceQueue, queueDiscs.Get (0));
 
+  Simulator::Stop (Seconds (6.0)); // force stop,
   std::cout << "Running the simulation" << std::endl;
   Simulator::Run ();
 
   QueueDisc::Stats st = queueDiscs.Get (0)->GetStats ();
 
-  if (st.GetNDroppedPackets (RedQueueDisc::UNFORCED_DROP) == 0)
-    {
-      std::cout << "There should be some unforced drops" << std::endl;
-      exit (1);
-    }
+  // if (st.GetNDroppedPackets (RedQueueDisc::UNFORCED_DROP) == 0)
+  //   {
+  //     std::cout << "There should be some unforced drops" << std::endl;
+  //     exit (1);
+  //   }
 
-  if (st.GetNDroppedPackets (QueueDisc::INTERNAL_QUEUE_DROP) != 0)
-    {
-      std::cout << "There should be zero drops due to queue full" << std::endl;
-      exit (1);
-    }
+  // if (st.GetNDroppedPackets (QueueDisc::INTERNAL_QUEUE_DROP) != 0)
+  //   {
+  //     std::cout << "There should be zero drops due to queue full" << std::endl;
+  //     exit (1);
+  //   }
 
   std::cout << "*** Stats from the bottleneck queue disc ***" << std::endl;
   std::cout << st << std::endl;

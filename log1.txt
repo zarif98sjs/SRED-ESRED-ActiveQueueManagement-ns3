@@ -1,0 +1,8 @@
+Waf: Entering directory `/home/zarif98sjs/ns-3-dev/build'
+[1963/2031] Compiling scratch/wired-red-simulation.cc
+[1992/2031] Linking build/scratch/wired-red-simulation
+Waf: Leaving directory `/home/zarif98sjs/ns-3-dev/build'
+Build commands will be stored in build/compile_commands.json
+'build' finished successfully (16.117s)
+Running the simulation
+[01;31mInterrupted[0m 

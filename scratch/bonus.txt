@@ -1,0 +1,187 @@
+wifi-nwifi-3-nflow-3-app-10Mbps-speed-10
+Running the simulation :( wifi-nwifi-3-nflow-3-app-10Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 4957 / 2907888
+Packets/Bytes enqueued: 4526 / 2654812
+Packets/Bytes dequeued: 4526 / 2654812
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 431 / 253076
+Packets/Bytes dropped before enqueue: 431 / 253076
+  Forced drop: 249 / 146412
+  Unforced drop: 182 / 106664
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4526 / 2654812
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 431 / 4957 = 8.69478%
+Delivery Ratio: 4526 / 4957 = 91.3052%
+
+Destroying the simulation
+=============================================================
+wifi-nwifi-6-nflow-6-app-10Mbps-speed-10
+Running the simulation :( wifi-nwifi-6-nflow-6-app-10Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 4285 / 2493380
+Packets/Bytes enqueued: 3764 / 2188580
+Packets/Bytes dequeued: 3764 / 2188580
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 521 / 304800
+Packets/Bytes dropped before enqueue: 521 / 304800
+  Forced drop: 37 / 21756
+  Unforced drop: 484 / 283044
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 3764 / 2188580
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 521 / 4285 = 12.1587%
+Delivery Ratio: 3764 / 4285 = 87.8413%
+
+Destroying the simulation
+=======================================================
+wifi-nwifi-10-nflow-10-app-10Mbps-speed-10
+Running the simulation :( wifi-nwifi-10-nflow-10-app-10Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 5327 / 3117644
+Packets/Bytes enqueued: 4546 / 2658416
+Packets/Bytes dequeued: 4546 / 2658416
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 781 / 459228
+Packets/Bytes dropped before enqueue: 781 / 459228
+  Forced drop: 384 / 225792
+  Unforced drop: 397 / 233436
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4546 / 2658416
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 781 / 5327 = 14.6612%
+Delivery Ratio: 4546 / 5327 = 85.3388%
+
+Destroying the simulation
+=========================================================
+wifi-nwifi-13-nflow-13-app-10Mbps-speed-10
+Running the simulation :( wifi-nwifi-13-nflow-13-app-10Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 5301 / 3096384
+Packets/Bytes enqueued: 4694 / 2739612
+Packets/Bytes dequeued: 4694 / 2739612
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 607 / 356772
+Packets/Bytes dropped before enqueue: 607 / 356772
+  Forced drop: 9 / 5292
+  Unforced drop: 598 / 351480
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4694 / 2739612
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 607 / 5301 = 11.4507%
+Delivery Ratio: 4694 / 5301 = 88.5493%
+
+Destroying the simulation
+======================================================
+wifi-nwifi-18-nflow-18-app-10Mbps-speed-10
+Running the simulation :( wifi-nwifi-18-nflow-18-app-10Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 5197 / 3033404
+Packets/Bytes enqueued: 4695 / 2738228
+Packets/Bytes dequeued: 4695 / 2738228
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 502 / 295176
+Packets/Bytes dropped before enqueue: 502 / 295176
+  Forced drop: 67 / 39396
+  Unforced drop: 435 / 255780
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4695 / 2738228
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 502 / 5197 = 9.65942%
+Delivery Ratio: 4695 / 5197 = 90.3406%
+=====================================================
+=======================================================
+wifi-nwifi-3-nflow-3-app-2Mbps-speed-10
+Running the simulation :( wifi-nwifi-3-nflow-3-app-2Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 3981 / 2282876
+Packets/Bytes enqueued: 3713 / 2125364
+Packets/Bytes dequeued: 3713 / 2125364
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 268 / 157512
+Packets/Bytes dropped before enqueue: 268 / 157512
+  Forced drop: 232 / 136380
+  Unforced drop: 36 / 21132
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 3713 / 2125364
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 268 / 3981 = 6.73198%
+Delivery Ratio: 3713 / 3981 = 93.268%
+
+Destroying the simulation
+=====================================
+wifi-nwifi-3-nflow-3-app-5Mbps-speed-10
+Running the simulation :( wifi-nwifi-3-nflow-3-app-5Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 4774 / 2797804
+Packets/Bytes enqueued: 4346 / 2546492
+Packets/Bytes dequeued: 4346 / 2546492
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 428 / 251312
+Packets/Bytes dropped before enqueue: 428 / 251312
+  Forced drop: 249 / 146412
+  Unforced drop: 179 / 104900
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4346 / 2546492
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 428 / 4774 = 8.96523%
+Delivery Ratio: 4346 / 4774 = 91.0348%
+
+Destroying the simulation
+===============================
+wifi-nwifi-3-nflow-3-app-8Mbps-speed-10
+Running the simulation :( wifi-nwifi-3-nflow-3-app-8Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 5023 / 2947104
+Packets/Bytes enqueued: 4505 / 2642836
+Packets/Bytes dequeued: 4505 / 2642836
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 518 / 304268
+Packets/Bytes dropped before enqueue: 518 / 304268
+  Forced drop: 249 / 146412
+  Unforced drop: 269 / 157856
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4505 / 2642836
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 518 / 5023 = 10.3126%
+Delivery Ratio: 4505 / 5023 = 89.6874%
+
+Destroying the simulation
+======================================================
+wifi-nwifi-3-nflow-3-app-12Mbps-speed-10
+Running the simulation :( wifi-nwifi-3-nflow-3-app-12Mbps-speed-10
+*** Stats from the bottleneck queue disc (RIGHT) ***
+
+Packets/Bytes received: 4892 / 2866784
+Packets/Bytes enqueued: 4496 / 2634252
+Packets/Bytes dequeued: 4496 / 2634252
+Packets/Bytes requeued: 0 / 0
+Packets/Bytes dropped: 396 / 232532
+Packets/Bytes dropped before enqueue: 396 / 232532
+  Forced drop: 249 / 146412
+  Unforced drop: 147 / 86120
+Packets/Bytes dropped after dequeue: 0 / 0
+Packets/Bytes sent: 4496 / 2634252
+Packets/Bytes marked: 0 / 0
+--------------------------
+Drop Ratio: 396 / 4892 = 8.09485%
+Delivery Ratio: 4496 / 4892 = 91.9052%
+
+Destroying the simulation
