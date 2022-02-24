@@ -14,44 +14,30 @@ overwrite accordingly. We call this `Extended Stabilized RED` or `ESRED` in shor
 ## `SRED`
 - [Implementation](sred/stabilized-red-queue-disc.cc)
 - [Simulation](simulation/wired-sred-simulation.cc)
+- Comparison with `RED`
+
+    ![](drawings/red-vs-sred/queue-drop.jpg)
+
+    ![](drawings/red-vs-sred/packet-drop.jpg)
+
+    ![](drawings/red-vs-sred/delivery.jpg)
+
+For a detialed explanation, implementation and network specification of the simulations please refer to the [report](Report.pdf)
+
 ## `ESRED`
 - [Implementation](esred/es-red-queue-disc.cc)
 - [Simulation](simulation/wired-esred-simulation.cc)
 
+- Comparison with `SRED`
 
-# **`Task A : Wireless high-rate (mobile)`**
+    ![](drawings/sred-vs-esred/delay.jpg)
 
-## **Topology**
+    ![](drawings/sred-vs-esred/queue-drop.jpg)
 
-![](drawings/wireless-jpg/wireless-high-rate.jpg)
+    ![](drawings/sred-vs-esred/packet-drop.jpg)
 
-
-## **Simulation**
-
-- [Code](wireless-high-rate/wireless-high-rate.cc)
-- [Parameter Variation Graphs](drawings/wifi)
-
-## **Sample Graph Outputs**
-
-![](drawings/wifi/node/drop.jpg)
-
-![](drawings/wifi/node/delivery.jpg)
+    ![](drawings/sred-vs-esred/delivery.jpg)
 
 
+For a detialed explanation, implementation and network specification of the simulations please refer to the [report](Report.pdf)
 
-# **`Task A : Wireless low-rate (static)`**
-
-
-## **Topology**
-
-![](drawings/wireless-jpg/wireless-lrwpan.jpg)
-
-
-## **Simulation**
-
-- [Code](wireless-low-rate/wireless-low-rate.cc)
-- [Parameter Variation Graphs](drawings/lrpwan)
-
-![](drawings/lrwpan/node/drop.jpg)
-
-![](drawings/lrwpan/node/delivery.jpg)
