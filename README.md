@@ -8,7 +8,7 @@ discards packets with a load-dependent probability when a buffer in a router in
 the Internet or an Intranet seem congested. SRED has an additional feature
 that over a wide range of load levels helps it stabilize its buffer occupation at a level independent of the number of active connections.
 
-An extended version of SRED is also implemented here where we also consider timestamp of the incoming packets in our algorithm and adjust the probability to overwrite accordingly. We call this `Extended Stabilized RED` or `ESRED` in short.
+An extended version of SRED is also implemented here where timestamp of the incoming packets is also considered in our algorithm and the probability to overwrite is adjusted accordingly. This is called here `Extended Stabilized RED` or `ESRED` in short.
 
 ## `SRED`
 - [Implementation](sred/stabilized-red-queue-disc.cc)
