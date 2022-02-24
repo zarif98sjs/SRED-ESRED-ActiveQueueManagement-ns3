@@ -4,7 +4,7 @@
 
 ## **Topology**
 
-![](drawings/wireless/wireless-high-rate.png)
+![](drawings/wireless-jpg/wireless-high-rate.jpg)
 
 
 ## **Simulation**
@@ -14,9 +14,9 @@
 
 ## **Sample Graph Outputs**
 
-![](drawings/wifi/node/drop.png)
+![](drawings/wifi/node/drop.jpg)
 
-![](drawings/wifi/node/delivery.png)
+![](drawings/wifi/node/delivery.jpg)
 
 
 
@@ -25,7 +25,7 @@
 
 ## **Topology**
 
-![](drawings/wireless/wireless-lrwpan.png)
+![](drawings/wireless-jpg/wireless-lrwpan.jpg)
 
 
 ## **Simulation**
@@ -33,6 +33,6 @@
 - [Code](wireless-low-rate/wireless-low-rate.cc)
 - [Parameter Variation Graphs](drawings/lrpwan)
 
-![](drawings/lrwpan/node/drop.png)
+![](drawings/lrwpan/node/drop.jpg)
 
-![](drawings/lrwpan/node/delivery.png)
+![](drawings/lrwpan/node/delivery.jpg)
