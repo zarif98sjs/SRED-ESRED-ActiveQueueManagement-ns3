@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Mohit P. Tahiliani <tahiliani@nitk.edu.in>
+ * Author: Md. Zarif Ul Alam
  *
  */
 
@@ -38,87 +38,49 @@
 using namespace ns3;
 
 
-std::string exp_name = "wifi";
-// calculate metrics
+std::string dir;
+uint32_t prev_b = 0;
+Time prevTime = Seconds (0);
+
+// Calculate throughput
 static void
-TraceMetrics (Ptr<FlowMonitor> monitor)
+TraceThroughput (Ptr<FlowMonitor> monitor)
 {
   FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
-  std::ofstream ofs_thp (exp_name+"/throughput.dat", std::ios::out | std::ios::app);
-  std::ofstream ofs_delay (exp_name+"/delay.dat", std::ios::out | std::ios::app);
-  std::ofstream ofs_drop (exp_name+"/drop.dat", std::ios::out | std::ios::app);
-  std::ofstream ofs_deliver (exp_name+"/delivery.dat", std::ios::out | std::ios::app);
+  auto itr = stats.begin ();
   Time curTime = Now ();
-  
-  // threshold
-  double tot_thr = 0;
-  // delay
-  double tot_delay = 0;
-  double tot_rx_packets = 0;
-  // drop and delivery
-  double tot_tx_packets = 0;
-  double tot_drop = 0;
-  double tot_delivery = 0;
-  // total sent
-  double tot_sent = 0;
-  int num_flows = 0;
-  for(auto itr:stats)
-  {
-    // threshold
-    tot_thr += (8 * itr.second.rxBytes ) / (1.0 * curTime.GetSeconds () );
-    // delay
-    tot_delay += itr.second.delaySum.GetSeconds ();
-    tot_rx_packets += itr.second.rxPackets;
-    // drop and delivery
-    tot_tx_packets += itr.second.txPackets;
-    tot_drop += itr.second.lostPackets;
-    tot_delivery += itr.second.rxPackets;
-    tot_sent += itr.second.txPackets;
-    num_flows++;
-  }
-  ofs_thp <<  curTime << " " << tot_thr << std::endl; // throughput (bit/s)
-  ofs_delay <<  curTime << " " << tot_delay/tot_rx_packets << std::endl; // delay (s)
-  ofs_drop <<  curTime << " " << (100.0* tot_drop)/(tot_rx_packets+tot_drop) << std::endl; // drop ratio (%)
-  ofs_deliver <<  curTime << " " << (100.0 * tot_delivery)/(tot_rx_packets+tot_drop) << std::endl; // delivery ratio (%)
-  Simulator::Schedule (Seconds (0.1), &TraceMetrics, monitor);
+  std::ofstream thr ("red-vs-ared-wifi-throughput.dat", std::ios::out | std::ios::app);
+  thr <<  curTime << " " << (8 * (itr->second.txBytes - prev_b)) / (1e6 * (curTime.GetSeconds () - prevTime.GetSeconds ())) << std::endl;
+  prevTime = curTime;
+  prev_b = itr->second.txBytes;
+  Simulator::Schedule (Seconds (0.4), &TraceThroughput, monitor);
 }
-
 
 NS_LOG_COMPONENT_DEFINE ("MyRedAredWifiExample");
 
 int main (int argc, char *argv[])
 {
-  // uint32_t    nLeaf = 10;
+  uint32_t    nLeaf = 10;
   uint32_t    maxPackets = 100;
-  bool        modeBytes  = true;
-
+  bool        modeBytes  = false;
+  uint32_t    queueDiscLimitPackets = 1000;
   double      minTh = 5;
   double      maxTh = 15;
-  uint32_t    pktSize = 500;
-  uint32_t    queueDiscLimitPackets = 300;
-
+  uint32_t    pktSize = 512;
+  std::string appDataRate = "10Mbps";
   std::string queueDiscType = "RED";
   uint16_t port = 5001;
-  std::string bottleNeckLinkBw = "5Mbps";
+  std::string bottleNeckLinkBw = "7Mbps";
   std::string bottleNeckLinkDelay = "50ms";
 
+  // newly added
+  uint32_t nWifi = 3;
 
-  // VARIABLE PARAMETERS
-  uint32_t nWifi = 10; // 3 , 6, 10 , 13 , 18 
-  std::string appDataRate = "10Mbps"; // 2 5 10 15 20
-  int32_t num_flow = 100; // 10 , 20 , 40 , 70 , 100  -----> x 2
-  int32_t speed = 10; // 10 , 20 , 30 , 40 , 50
-
-  exp_name += "-nwifi-" + std::to_string(nWifi); // node
-  exp_name += "-nflow-" + std::to_string(num_flow); // flow
-  exp_name += "-app-" + appDataRate; // data rate
-  exp_name += "-speed-" + std::to_string(speed); // range
-
-  cout<<exp_name<<endl;
-
+  // LogComponentEnableAll (LogLevel(LOG_LEVEL_ALL|LOG_PREFIX_FUNC));
+  // LogComponentEnable ("OnOffApplication",LogLevel(LOG_LEVEL_INFO|LOG_PREFIX_FUNC));
 
   CommandLine cmd (__FILE__);
-  // cmd.AddValue ("nLeaf",     "Number of left and right side leaf nodes", nLeaf);
+  cmd.AddValue ("nLeaf",     "Number of left and right side leaf nodes", nLeaf);
   cmd.AddValue ("maxPackets","Max Packets allowed in the device queue", maxPackets);
   cmd.AddValue ("queueDiscLimitPackets","Max Packets allowed in the queue disc", queueDiscLimitPackets);
   cmd.AddValue ("queueDiscType", "Set Queue disc type to RED or ARED", queueDiscType);
@@ -249,20 +211,14 @@ int main (int argc, char *argv[])
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (0.5),
-                                 "DeltaY", DoubleValue (1.0),
+                                 "DeltaX", DoubleValue (5.0),
+                                 "DeltaY", DoubleValue (10.0),
                                  "GridWidth", UintegerValue (3),
                                  "LayoutType", StringValue ("RowFirst"));
 
-  // // tell STA nodes how to move
-  // mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-  //                            "Bounds", RectangleValue (Rectangle (-50, 50, -50, 50)));  
-  
-  // // tell STA nodes how to move
+  // tell STA nodes how to move
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                             "Bounds", RectangleValue (Rectangle (-50, 50, -50, 50)),
-                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant="+std::to_string(speed)+"]"));
-  
+                             "Bounds", RectangleValue (Rectangle (-50, 50, -50, 50)));
   // install on STA nodes
   mobility.Install (wifiStaNodesLeft);
   mobility.Install (wifiStaNodesRight);
@@ -307,10 +263,8 @@ int main (int argc, char *argv[])
 
   // Install on/off app on all right side nodes
   OnOffHelper clientHelper ("ns3::TcpSocketFactory", Address ());
-  // clientHelper.SetAttribute ("OnTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
-  // clientHelper.SetAttribute ("OffTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
-  clientHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  clientHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  clientHelper.SetAttribute ("OnTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
+  clientHelper.SetAttribute ("OffTime", StringValue ("ns3::UniformRandomVariable[Min=0.|Max=1.]"));
  
   Address sinkLocalAddress (InetSocketAddress (Ipv4Address::GetAny (), port));
   PacketSinkHelper packetSinkHelper ("ns3::TcpSocketFactory", sinkLocalAddress);
@@ -321,69 +275,43 @@ int main (int argc, char *argv[])
       // create sink app on left side node
       sinkApps.Add (packetSinkHelper.Install (wifiStaNodesLeft.Get(i)));
     }
-  sinkApps.Start (Seconds (1.0));
-  sinkApps.Stop (Seconds (6.5));
+  sinkApps.Start (Seconds (2.0));
+  sinkApps.Stop (Seconds (12.0));
 
   // sinkApps.Start (Seconds (0.0));
   // sinkApps.Stop (Seconds (30.0));
 
   ApplicationContainer clientApps;
-  int cur_flow_count = 0;
   for (uint32_t i = 0; i < nWifi; ++i)
     {
       // Create an on/off app on right side node which sends packets to the left side
       AddressValue remoteAddress (InetSocketAddress (staNodeInterfacesLeft.GetAddress(i), port));
-      
-      for(uint32_t j = 0; j < nWifi; ++j)
-      {
-        clientHelper.SetAttribute ("Remote", remoteAddress);
-        clientApps.Add (clientHelper.Install (wifiStaNodesRight.Get(j)));
-
-        cur_flow_count++;
-        if(cur_flow_count >= num_flow)
-          break;
-      }
-
-      if(cur_flow_count >= num_flow)
-          break;
-
-      // clientHelper.SetAttribute ("Remote", remoteAddress);
-      // clientApps.Add (clientHelper.Install (wifiStaNodesRight.Get(i)));
+      clientHelper.SetAttribute ("Remote", remoteAddress);
+      clientApps.Add (clientHelper.Install (wifiStaNodesRight.Get(i)));
     }
-  clientApps.Start (Seconds (2.0)); // Start 1 second after sink
+  clientApps.Start (Seconds (3.0)); // Start 1 second after sink
   clientApps.Stop (Seconds (6.0)); // Stop before the sink  
   // clientApps.Start (Seconds (1.0)); // Start 1 second after sink
   // clientApps.Stop (Seconds (17.0)); // Stop before the sink
 
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
-  Simulator::Stop (Seconds (6.5)); // force stop,
+  Simulator::Stop (Seconds (14.0)); // force stop,
 
-  std::string dirToSave = "mkdir -p " + exp_name;
-  std::string dirToDel = "rm -rf " + exp_name;
-  if (system (dirToDel.c_str ()) == -1)
-  {
-      exit (1);
-  }
-  if (system (dirToSave.c_str ()) == -1)
-  {
-      exit (1);
-  }
-
-  // AsciiTraceHelper ascii;
-  // bottleNeckLink.EnableAsciiAll (ascii.CreateFileStream (exp_name+"/red-wifi.tr"));
-  // bottleNeckLink.EnablePcapAll (exp_name+"/red-wifi");
+  AsciiTraceHelper ascii;
+  bottleNeckLink.EnableAsciiAll (ascii.CreateFileStream ("red-vs-ared-wifi.tr"));
+  bottleNeckLink.EnablePcapAll ("red-vs-ared-wifi.tr");
 
   // Flow monitor
   Ptr<FlowMonitor> flowMonitor;
   FlowMonitorHelper flowHelper;
   flowMonitor = flowHelper.InstallAll();
-  Simulator::Schedule (Seconds (2.2), &TraceMetrics, flowMonitor);
+  Simulator::Schedule (Seconds (0 + 0.000001), &TraceThroughput, flowMonitor);
 
-  std::cout << "Running the simulation :( " <<exp_name<< std::endl;
+  std::cout << "Running the simulation :( " << std::endl;
   Simulator::Run ();
 
-  flowMonitor->SerializeToXmlFile(exp_name+"/flow.xml", true, true);
+  flowMonitor->SerializeToXmlFile("red-vs-ared-wifi.xml", true, true);
 
   QueueDisc::Stats stRight = queueDiscRight.Get (0)->GetStats ();
 
